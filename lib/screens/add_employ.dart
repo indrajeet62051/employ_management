@@ -13,6 +13,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController idController = TextEditingController();
   final TextEditingController departmentController = TextEditingController();
+  final TextEditingController designationController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
   File? _imageFile;
@@ -38,6 +39,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
       idController.clear();
       departmentController.clear();
       emailController.clear();
+      designationController.clear();
       setState(() => _imageFile = null);
     }
   }
@@ -104,6 +106,18 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                 validator: (value) =>
                 value!.isEmpty ? 'Enter department' : null,
               ),
+              SizedBox(height: 16),
+
+              TextFormField(
+                controller: designationController,
+                decoration: InputDecoration(
+                  labelText: 'Designation',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) =>
+                value!.isEmpty ? 'Enter Designation' : null,
+              ),
+
               SizedBox(height: 16),
 
               // Email field
