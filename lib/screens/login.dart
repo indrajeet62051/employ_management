@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dashboardscreen.dart';
 
 void main() {
   runApp(LoginApp());
@@ -67,20 +68,31 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Center(child: Text("Admin Login")),
-          backgroundColor: Colors.blue,
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      // This allows the body to extend behind the app bar
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Center(child: Text("Admin Login")),
+        backgroundColor: Colors.blue.withOpacity(0.8),
+        // Semi-transparent app bar
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/loginBGimage.png"), // Full path
+            fit: BoxFit.cover, // Cover the entire screen
+          ),
         ),
-        body: Padding(
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 20),
+                SizedBox(height: 350),
+                // Adjust the height to move the form down
                 TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(
@@ -90,7 +102,7 @@ class LoginScreenState extends State<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) => validateEmail(value ?? ''),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 50),
                 TextFormField(
                   controller: passwordController,
                   decoration: InputDecoration(
@@ -100,7 +112,7 @@ class LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   validator: (value) => validatePassword(value ?? ''),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
@@ -118,20 +130,4 @@ class LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class DashboardScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text(
-          "Welcome to the Dashboard!",
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    );
-  }
-}
+
