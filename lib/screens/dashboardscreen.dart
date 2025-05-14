@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'manage_employ_auth.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -75,7 +76,7 @@ class DashboardScreen extends StatelessWidget {
                 leading: Icon(Icons.manage_accounts, color: Colors.blue),
                 title: Text("Manage Employees"),
                 trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
+                onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ManageEmployAuth()));
                   // Navigate to Manage Employees screen
                 },
               ),

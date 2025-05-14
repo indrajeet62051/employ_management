@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8  # ✅ This should be inside dependencies
+  image_picker: ^1.0.4
 
 flutter:
   uses-material-design: true  # ✅ This is correct under flutter
