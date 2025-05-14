@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'add_employ.dart';
+import 'view_employee.dart';
+import 'edit_and_delete_screen.dart';
 
 class EmployeeOperationsScreen extends StatelessWidget {
   @override
@@ -28,7 +30,7 @@ class EmployeeOperationsScreen extends StatelessWidget {
             // Edit Employee Button
             ElevatedButton(
               onPressed: () {
-                // Navigate to Edit Employee Screen
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditEmployeeScreen()));
               },
               child: Text("Edit Employee"),
               style: ElevatedButton.styleFrom(
@@ -39,9 +41,9 @@ class EmployeeOperationsScreen extends StatelessWidget {
             // Delete Employee Button
             ElevatedButton(
               onPressed: () {
-                // Navigate to Delete Employee Screen
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeScreen()));
               },
-              child: Text("Delete Employee"),
+              child: Text("View All Employee"),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
               ),

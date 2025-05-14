@@ -4,21 +4,39 @@ import 'dart:io';
 import 'package:employ_management/database/employee_database.dart';
 import 'package:employ_management/models/employee.dart';
 
-class AddEmployeeScreen extends StatefulWidget {
+class EditEmployeeDetailsScreen extends StatefulWidget {
+  final Employee employee;
+
+  EditEmployeeDetailsScreen({required this.employee});
+
   @override
-  _AddEmployeeScreenState createState() => _AddEmployeeScreenState();
+  _EditEmployeeDetailsScreenState createState() =>
+      _EditEmployeeDetailsScreenState();
 }
 
-class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
+class _EditEmployeeDetailsScreenState extends State<EditEmployeeDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
-  final TextEditingController hobbyController = TextEditingController();
-  final TextEditingController designationController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
+  TextEditingController hobbyController = TextEditingController();
+  TextEditingController designationController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   File? _imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = widget.employee.name;
+    contactController.text = widget.employee.empId; // Using empId as contact
+    hobbyController.text = widget.employee.department; // Using department as hobby
+    designationController.text = widget.employee.designation;
+    emailController.text = widget.employee.email;
+    _imageFile = widget.employee.imagePath != null
+        ? File(widget.employee.imagePath!)
+        : null;
+  }
 
   Future<void> pickImage() async {
     final pickedFile =
@@ -30,31 +48,26 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     }
   }
 
-  void saveEmployee() async {
+  void updateEmployee() async {
     if (_formKey.currentState!.validate()) {
-      Employee newEmployee = Employee(
+      final updatedEmployee = Employee(
+        id: widget.employee.id,
         name: nameController.text,
-        empId: contactController.text, // Using empId field as Contact Number
-        department: hobbyController.text, // Using department field as Hobby
+        empId: contactController.text,
+        department: hobbyController.text,
         designation: designationController.text,
         email: emailController.text,
-        imagePath: _imageFile?.path,
+        imagePath: _imageFile?.path ?? widget.employee.imagePath,
       );
 
-      int result = await DBHelper().insertEmployee(newEmployee);
+      final dbHelper = DBHelper();
+      await dbHelper.updateEmployee(updatedEmployee);
 
-      if (result > 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Employee added successfully!")),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Employee details updated successfully!")),
+      );
 
-        nameController.clear();
-        contactController.clear();
-        hobbyController.clear();
-        designationController.clear();
-        emailController.clear();
-        setState(() => _imageFile = null);
-      }
+      Navigator.pop(context);
     }
   }
 
@@ -62,11 +75,11 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Employee"),
+        title: Text("Edit Employee"),
         backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
@@ -76,9 +89,12 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                 child: CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey[300],
-                  backgroundImage:
-                  _imageFile != null ? FileImage(_imageFile!) : null,
-                  child: _imageFile == null
+                  backgroundImage: _imageFile != null
+                      ? FileImage(_imageFile!)
+                      : widget.employee.imagePath != null
+                      ? FileImage(File(widget.employee.imagePath!))
+                      : null,
+                  child: _imageFile == null && widget.employee.imagePath == null
                       ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
                       : null,
                 ),
@@ -121,8 +137,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                   labelText: 'Hobby',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                value!.isEmpty ? 'Enter hobby' : null,
+                validator: (value) => value!.isEmpty ? 'Enter hobby' : null,
               ),
               SizedBox(height: 16),
 
@@ -154,12 +169,12 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
               SizedBox(height: 24),
 
               ElevatedButton(
-                onPressed: saveEmployee,
+                onPressed: updateEmployee,
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
                   backgroundColor: Colors.blue,
                 ),
-                child: Text("Save Employee"),
+                child: Text("Update Employee"),
               ),
             ],
           ),
