@@ -20,14 +20,50 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
 
   File? _imageFile;
 
-  Future<void> pickImage() async {
-    final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+  // Updated: Pick image from specified source (camera or gallery)
+  Future<void> pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
     }
+  }
+
+  // Show bottom sheet to choose image source
+  void _showImageSourceSelector() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Pick from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Take a Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void saveEmployee() async {
@@ -72,7 +108,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: pickImage,
+                onTap: _showImageSourceSelector,
                 child: CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey[300],
@@ -105,14 +141,12 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Enter contact number';
-                  // Regex: first digit 6-9, followed by exactly 9 more digits
                   final phoneRegex = RegExp(r'^[6-9]\d{9}$');
                   return phoneRegex.hasMatch(value)
                       ? null
                       : 'Enter a valid 10-digit number starting with 6-9';
                 },
               ),
-
               SizedBox(height: 16),
 
               TextFormField(

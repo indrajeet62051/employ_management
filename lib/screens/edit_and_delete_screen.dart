@@ -88,7 +88,7 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                           : null,
                     ),
                     title: Text(employee.name),
-                    subtitle: Text('ID: ${employee.empId}'),
+                    subtitle: Text('Designation: ${employee.designation}'),
                     trailing: Wrap(
                       children: [
                         IconButton(
