@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:employ_management/database/employee_database.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class AttendanceScreen extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   final DBHelper db = DBHelper();
+  final FirebaseFunctions functions = FirebaseFunctions.instance;
 
   List<Map<String, dynamic>> attendanceList = [];
   List<Map<String, dynamic>> employees = [];
@@ -62,46 +65,121 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
+  // Send attendance emails using Firebase Cloud Function
+  Future<void> sendAttendanceEmails() async {
+    try {
+      // Prepare attendance records with employee details
+      final attendanceRecords =
+          employees.map((employee) {
+            return {
+              'name': employee['name'],
+              'email': employee['email'],
+              'status': currentAttendance[employee['id']] ?? 'Absent',
+            };
+          }).toList();
+
+      // Format date for email
+      final emailDate = DateFormat('dd MMM, yyyy').format(selectedDate);
+
+      // Call Firebase function
+      final HttpsCallable callable = functions.httpsCallable(
+        'sendAttendanceEmails',
+      );
+      final result = await callable.call({
+        'attendanceRecords': attendanceRecords,
+        'date': emailDate,
+      });
+
+      print('Email sending result: ${result.data}');
+    } catch (e) {
+      print('Error sending emails: $e');
+      // Show error dialog
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text(
+                'Failed to send attendance emails. Please try again.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+      );
+    }
+  }
+
   // Save all attendance records at once
   Future<void> saveAllAttendance() async {
     setState(() {
       isLoading = true;
     });
 
-    // First delete existing records for this date to avoid duplicates
-    for (var record in attendanceList) {
-      await db.deleteAttendance(record['id']);
-    }
+    try {
+      // First delete existing records for this date to avoid duplicates
+      for (var record in attendanceList) {
+        await db.deleteAttendance(record['id']);
+      }
 
-    // Insert all current attendance records
-    for (var employee in employees) {
-      int employeeId = employee['id'];
-      String status = currentAttendance[employeeId] ?? 'Absent';
-      await db.insertAttendance(
-        employeeId: employeeId,
-        status: status,
-        date: formattedDate,
-      );
-    }
+      // Insert all current attendance records
+      for (var employee in employees) {
+        int employeeId = employee['id'];
+        String status = currentAttendance[employeeId] ?? 'Absent';
+        await db.insertAttendance(
+          employeeId: employeeId,
+          status: status,
+          date: formattedDate,
+        );
+      }
 
-    // Refresh data from database
-    await fetchAttendanceAndEmployees();
+      // Send emails
+      await sendAttendanceEmails();
 
-    // Show success dialog
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('Success'),
-            content: Text('Attendance saved. Email sent to all employees.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
+      // Refresh data from database
+      await fetchAttendanceAndEmployees();
+
+      // Show success dialog
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: Text('Success'),
+              content: Text(
+                'Attendance saved and emails sent to all employees.',
               ),
-            ],
-          ),
-    );
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+      );
+    } catch (e) {
+      print('Error saving attendance: $e');
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text('Failed to save attendance. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   // Show date picker dialog
