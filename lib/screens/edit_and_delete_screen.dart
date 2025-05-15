@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:employ_management/database/employee_database.dart';  // Import the database helper
+import 'package:employ_management/database/employee_database.dart'; // Import the database helper
 import 'package:employ_management/models/employee.dart';
 import 'edit_employee_screen.dart'; // For the Edit screen
 
@@ -31,10 +31,11 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
 
   // Search filter logic
   void _filterEmployees(String query) {
-    final filtered = employees.where((emp) {
-      return emp.name.toLowerCase().contains(query.toLowerCase()) ||
-          emp.empId.toLowerCase().contains(query.toLowerCase());
-    }).toList();
+    final filtered =
+        employees.where((emp) {
+          return emp.name.toLowerCase().contains(query.toLowerCase()) ||
+              emp.contactNumber.toLowerCase().contains(query.toLowerCase());
+        }).toList();
     setState(() {
       filteredEmployees = filtered;
     });
@@ -80,12 +81,14 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                     contentPadding: EdgeInsets.all(10),
                     leading: CircleAvatar(
                       radius: 30,
-                      backgroundImage: employee.imagePath != null
-                          ? FileImage(File(employee.imagePath!))
-                          : null,
-                      child: employee.imagePath == null
-                          ? Icon(Icons.person, size: 30)
-                          : null,
+                      backgroundImage:
+                          employee.imagePath != null
+                              ? FileImage(File(employee.imagePath!))
+                              : null,
+                      child:
+                          employee.imagePath == null
+                              ? Icon(Icons.person, size: 30)
+                              : null,
                     ),
                     title: Text(employee.name),
                     subtitle: Text('Designation: ${employee.designation}'),
@@ -98,8 +101,10 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    EditEmployeeDetailsScreen(employee: employee),
+                                builder:
+                                    (context) => EditEmployeeDetailsScreen(
+                                      employee: employee,
+                                    ),
                               ),
                             );
                           },

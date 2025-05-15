@@ -1,43 +1,41 @@
 class Employee {
   int? id;
   String name;
-  String empId;
-  String department;
+  String contactNumber;
+  String hobby;
   String designation;
   String email;
-  String? imagePath; // store image path as string
+  String? imagePath;
 
   Employee({
     this.id,
     required this.name,
-    required this.empId,
-    required this.department,
+    required this.contactNumber,
+    required this.hobby,
     required this.designation,
     required this.email,
     this.imagePath,
   });
 
-  // Convert to map for database
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
-      'empId': empId,
-      'department': department,
+      'contactNumber': contactNumber,
+      'hobby': hobby,
       'designation': designation,
       'email': email,
       'imagePath': imagePath,
     };
   }
 
-  // Convert from map
   factory Employee.fromMap(Map<String, dynamic> map) {
     return Employee(
       id: map['id'],
       name: map['name'],
-      empId: map['empId'],
-      department: map['department'],
-      designation: map['designation'],
+      contactNumber: map['contactNumber'] ?? '',
+      hobby: map['hobby'] ?? '',
+      designation: map['designation'] ?? '',
       email: map['email'],
       imagePath: map['imagePath'],
     );

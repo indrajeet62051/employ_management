@@ -70,64 +70,66 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // This allows the body to extend behind the app bar
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Center(child: Text("Admin Login")),
         backgroundColor: Colors.blue.withOpacity(0.8),
-        // Semi-transparent app bar
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/loginBGimage.png"), // Full path
-            fit: BoxFit.cover, // Cover the entire screen
+            image: AssetImage("assets/images/loginBGimage.png"),
+            fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(height: 350),
-                // Adjust the height to move the form down
-                TextFormField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    labelText: "Enter your Email",
-                    border: OutlineInputBorder(),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Only takes needed height
+                children: [
+                  SizedBox(height: 50),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: "Enter your Email",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) => validateEmail(value ?? ''),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) => validateEmail(value ?? ''),
-                ),
-                SizedBox(height: 50),
-                TextFormField(
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    border: OutlineInputBorder(),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      border: OutlineInputBorder(),
+                    ),
+                    obscureText: true,
+                    validator: (value) => validatePassword(value ?? ''),
                   ),
-                  obscureText: true,
-                  validator: (value) => validatePassword(value ?? ''),
-                ),
-                SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      checkLogin();
-                    }
-                  },
-                  child: Text("Login"),
-                ),
-              ],
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        checkLogin();
+                      }
+                    },
+                    child: Text("Login"),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
+
 }
 
 

@@ -14,12 +14,11 @@ class EditEmployeeDetailsScreen extends StatefulWidget {
       _EditEmployeeDetailsScreenState();
 }
 
-class _EditEmployeeDetailsScreenState
-    extends State<EditEmployeeDetailsScreen> {
+class _EditEmployeeDetailsScreenState extends State<EditEmployeeDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController contactController = TextEditingController();
+  TextEditingController contactNumberController = TextEditingController();
   TextEditingController hobbyController = TextEditingController();
   TextEditingController designationController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -30,14 +29,15 @@ class _EditEmployeeDetailsScreenState
   void initState() {
     super.initState();
     nameController.text = widget.employee.name;
-    contactController.text = widget.employee.empId;
-    hobbyController.text = widget.employee.department;
+    contactNumberController.text = widget.employee.contactNumber;
+    hobbyController.text = widget.employee.hobby;
     designationController.text = widget.employee.designation;
     emailController.text = widget.employee.email;
 
-    _imageFile = widget.employee.imagePath != null
-        ? File(widget.employee.imagePath!)
-        : null;
+    _imageFile =
+        widget.employee.imagePath != null
+            ? File(widget.employee.imagePath!)
+            : null;
   }
 
   Future<void> pickImage(ImageSource source) async {
@@ -89,8 +89,8 @@ class _EditEmployeeDetailsScreenState
       final updatedEmployee = Employee(
         id: widget.employee.id,
         name: nameController.text,
-        empId: contactController.text,
-        department: hobbyController.text,
+        contactNumber: contactNumberController.text,
+        hobby: hobbyController.text,
         designation: designationController.text,
         email: emailController.text,
         imagePath: _imageFile?.path ?? widget.employee.imagePath,
@@ -125,16 +125,22 @@ class _EditEmployeeDetailsScreenState
                 child: CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey[300],
-                  backgroundImage: _imageFile != null
-                      ? FileImage(_imageFile!)
-                      : widget.employee.imagePath != null
-                      ? FileImage(File(widget.employee.imagePath!))
-                      : null,
-                  child: _imageFile == null &&
-                      (widget.employee.imagePath == null ||
-                          widget.employee.imagePath!.isEmpty)
-                      ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
-                      : null,
+                  backgroundImage:
+                      _imageFile != null
+                          ? FileImage(_imageFile!)
+                          : widget.employee.imagePath != null
+                          ? FileImage(File(widget.employee.imagePath!))
+                          : null,
+                  child:
+                      _imageFile == null &&
+                              (widget.employee.imagePath == null ||
+                                  widget.employee.imagePath!.isEmpty)
+                          ? Icon(
+                            Icons.camera_alt,
+                            size: 40,
+                            color: Colors.white70,
+                          )
+                          : null,
                 ),
               ),
               SizedBox(height: 20),
@@ -145,13 +151,13 @@ class _EditEmployeeDetailsScreenState
                   labelText: 'Employee Name',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                value!.isEmpty ? 'Enter employee name' : null,
+                validator:
+                    (value) => value!.isEmpty ? 'Enter employee name' : null,
               ),
               SizedBox(height: 16),
 
               TextFormField(
-                controller: contactController,
+                controller: contactNumberController,
                 decoration: InputDecoration(
                   labelText: 'Contact Number',
                   border: OutlineInputBorder(),
@@ -184,8 +190,8 @@ class _EditEmployeeDetailsScreenState
                   labelText: 'Designation',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                value!.isEmpty ? 'Enter designation' : null,
+                validator:
+                    (value) => value!.isEmpty ? 'Enter designation' : null,
               ),
               SizedBox(height: 16),
 
