@@ -97,17 +97,18 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Navigate to edit screen and pass the employee data
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (context) => EditEmployeeDetailsScreen(
-                                      employee: employee,
-                                    ),
+                                builder: (context) => EditEmployeeDetailsScreen(employee: employee),
                               ),
-                            );
+                            ).then((value) {
+                              if (value == true) {
+                                _fetchEmployees(); // refresh after editing
+                              }
+                            });
                           },
+
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
