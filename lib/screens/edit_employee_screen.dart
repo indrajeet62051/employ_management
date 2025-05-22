@@ -103,7 +103,7 @@ class _EditEmployeeDetailsScreenState extends State<EditEmployeeDetailsScreen> {
         SnackBar(content: Text("Employee details updated successfully!")),
       );
 
-      Navigator.pop(context,true);
+      Navigator.pop(context);
     }
   }
 
